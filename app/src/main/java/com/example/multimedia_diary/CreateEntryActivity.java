@@ -38,6 +38,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
@@ -64,6 +70,8 @@ public class CreateEntryActivity extends AppCompatActivity {
     private GridView imageGridView;
     private Spinner weatherSpinner;
     private Uri videoUri;
+    private SupportMapFragment mapFragment;
+    private GoogleMap map;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -78,6 +86,14 @@ public class CreateEntryActivity extends AppCompatActivity {
 
         // Generate entry unique id to use as prefix for images/videos
         entry.id = UUID.randomUUID().toString().replace("-", "");
+
+        // Initialize map
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getView().setVisibility(View.GONE);
+        mapFragment.getMapAsync(googleMap -> {
+            map = googleMap;
+        });
 
         // Initialize image grid view
         imageGridView = findViewById(R.id.image_grid_view);
@@ -175,6 +191,19 @@ public class CreateEntryActivity extends AppCompatActivity {
                 // Set latitude and longitude to entry after location changed
                 entry.latitude = location.getLatitude();
                 entry.longitude = location.getLongitude();
+
+                // Show map
+                mapFragment.getView().setVisibility(View.VISIBLE);
+
+                // Clear previous marker
+                map.clear();
+
+                // Add new marker
+                LatLng position = new LatLng(entry.latitude, entry.longitude);
+                map.addMarker(new MarkerOptions().position(position));
+                map.moveCamera(CameraUpdateFactory.newLatLng(position));
+
+                // Notify saved
                 loadingToast.cancel();
                 Toast.makeText(getApplicationContext(), "Saved location", Toast.LENGTH_SHORT).show();
             }

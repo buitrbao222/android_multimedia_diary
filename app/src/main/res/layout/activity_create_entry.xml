@@ -52,6 +52,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/weather_spinner" />
 
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                      xmlns:map="http://schemas.android.com/apk/res-auto"
+                      xmlns:tools="http://schemas.android.com/tools"
+                      android:id="@+id/map"
+                      android:name="com.google.android.gms.maps.SupportMapFragment"
+                      android:layout_width="match_parent"
+                      android:layout_height="300dp"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toBottomOf="@id/input_content"
+                      map:liteMode="true"
+                      tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
+
             <!-- Images -->
             <com.example.multimedia_diary.MyGridView
                 android:id="@+id/image_grid_view"
@@ -63,7 +75,7 @@
                 android:verticalSpacing="16dp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/input_content" />
+                app:layout_constraintTop_toBottomOf="@id/map" />
 
             <!-- Videos -->
             <LinearLayout

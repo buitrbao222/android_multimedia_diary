@@ -60,20 +60,18 @@ public class EntryDetailsActivity extends AppCompatActivity {
         contentTextView.setText(entry.content);
 
         // Initialize map
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+
         if (entry.latitude != 0 && entry.longitude != 0) {
-            // Get map fragment
-            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.map);
-
-            // Display map
-            mapFragment.getView().setVisibility(View.VISIBLE);
-
             // Set marker when map is ready
             mapFragment.getMapAsync(googleMap -> {
                 LatLng location = new LatLng(entry.latitude, entry.longitude);
                 googleMap.addMarker(new MarkerOptions().position(location));
                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(location));
             });
+        } else {
+            mapFragment.getView().setVisibility(View.GONE);
         }
 
         // Initialize image grid view
