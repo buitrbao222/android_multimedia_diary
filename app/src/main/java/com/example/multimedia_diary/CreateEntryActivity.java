@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -36,6 +37,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -61,6 +65,7 @@ public class CreateEntryActivity extends AppCompatActivity {
     private Spinner weatherSpinner;
     private Uri videoUri;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -236,17 +241,16 @@ public class CreateEntryActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            // Get bitmap from image
-            Bitmap bitmap = BitmapFactory.decodeFile(imageFiles.get(imageFiles.size() - 1).getAbsolutePath());
-
-            // Add image to entry
-            imageBitmaps.add(bitmap);
-
-            // Show image grid view
-            imageGridView.setVisibility(View.VISIBLE);
-
-            // Update image grid view
-            imageListAdapter.notifyDataSetChanged();
+            File imageFile = imageFiles.get(imageFiles.size() - 1);
+            ImageLoader imageLoader = ImageLoader.getInstance();
+            imageLoader.loadImage(String.valueOf(Uri.fromFile(imageFile)), new SimpleImageLoadingListener() {
+                @Override
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    imageBitmaps.add(loadedImage);
+                    imageGridView.setVisibility(View.VISIBLE);
+                    imageListAdapter.notifyDataSetChanged();
+                }
+            });
         }
 
         if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
